@@ -1,0 +1,41 @@
+ELF file SHA256: 793b0df75
+
+Rebooting...
+ets Jul 29 2019 12:21:46
+
+rst:0xc (SW_CPU_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:1
+load:0x3fff0030,len:4744
+load:0x40078000,len:15672
+load:0x40080400,len:3164
+entry 0x4008059c
+=== ESP32 Kyber-512 SERVER (network mode) ===
+Connecting to WiFi..=== ESP32 Kyber-512 SERVER (network mode) ===
+Connecting to WiFi.....
+Connected, IP address: 192.168.137.159
+Server listening on port 5000
+=== Testing Kyber KEM (keypair + enc + dec self-test) ===
+[+] Keypair generation SUCCESS!
+PK length: 800
+SK length: 1632
+PK (first 64 hex chars):
+b66197ee803aa0a560befabc1dca0afa08b3a3556fe2327adf8502472bb2adc9
+[+] crypto_kem_enc SUCCESS!
+CT (first 64 hex chars):
+2a2ea3b3a5e7b1cc51260cc63523c1b943129c88a3db62d5d37a79587d59de2b
+[+] crypto_kem_dec SUCCESS!
+[✓] KEM self-test PASSED: shared secrets match!
+Shared secret (first 64 hex chars): 90c36da5c4a2f8a75aeea69d65f64b4936237ad0c61564db119373092fb55e7f
+
+=== AES-GCM self-test using shared secret as key ===
+[+] AES-GCM encryption OK
+Plaintext: Hello PQC AES-GCM!
+Ciphertext (hex, first 64 chars): b43a8591d0636976c835777daa9c2f8d935c
+Tag (hex): 38bfeb46d61aba205de33b6399c32a9b
+[✓] AES-GCM self-test PASSED: decrypted == original
+Decrypted: Hello PQC AES-GCM!
+[✓] Combined KEM + AES-GCM self-test PASSED
+
+=== Crypto server task entering main loop ===
