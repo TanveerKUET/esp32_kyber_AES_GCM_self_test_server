@@ -34,7 +34,7 @@ Each client establishes a *fresh* Kyber shared secret.
 ## 📁 Project Structure
 
 ```
-/your-repo/
+/esp32_kyber_AES_GCM_self_test_server/
 │── README.md          <-- (this file)
 │── esp32_kyber_self_test_server.ino
 │── kem.h
@@ -49,8 +49,8 @@ Each client establishes a *fresh* Kyber shared secret.
 Edit the following lines in the `.ino` file:
 
 ```cpp
-const char* WIFI_SSID     = "SAKIB";
-const char* WIFI_PASSWORD = "123456AB";
+const char* WIFI_SSID     = "WIFI_SSID";
+const char* WIFI_PASSWORD = "WIFI_PASSWORD";
 
 const uint16_t SERVER_PORT = 5000;
 ```
@@ -159,92 +159,33 @@ This confirms:
 ## 📜 Serial Output Example
 
 ```
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0xee
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:1
+load:0x3fff0030,len:4744
+load:0x40078000,len:15672
+load:0x40080400,len:3164
+entry 0x4008059c
+
+=== ESP32 Kyber-512 SERVER (network mode) ===
 === Testing Kyber KEM (keypair + enc + dec self-test) ===
 [+] Keypair generation SUCCESS!
+PK length: 800
+SK length: 1632
+PK (first 64 hex chars):
+793b532f53047f3918823212ac9a864c686743570cca6c68ffacb6a5d59561c6
 [+] crypto_kem_enc SUCCESS!
-[+] crypto_kem_dec SUCCESS!
+CT (first 64 hex chars):
+2b7ad58a88229512046fdcc555f86054e44b624820d49c6a2fe4febb2b1b24cd
 [✓] KEM self-test PASSED: shared secrets match!
-
-=== AES-GCM self-test using shared secret as key ===
-Plaintext: Hello PQC AES-GCM!
-[✓] AES-GCM self-test PASSED
-=== Crypto server task entering main loop ===
+Shared secret (first 64 hex chars): a2bdafb7bb5119cf5621529611033dfe86da897721332338e02176076524d47e
+=== Kyber self-test DONE ===
+Connecting to WiFi...
+Connected, IP address: 192.168.137.93
+Server listening on port 5000
 ```
 
 ---
 
-## 🖥 Example Client (Python)
 
-```python
-import socket
-from kyber import crypto_kem_enc, hex_encode, hex_decode
-
-HOST = "ESP32_IP_HERE"
-PORT = 5000
-
-s = socket.socket()
-s.connect((HOST, PORT))
-
-# Receive public key
-line = s.recv(4096).decode().strip()
-assert line.startswith("PK:")
-pk = hex_decode(line[3:])
-
-# Encapsulate
-ct, ss = crypto_kem_enc(pk)
-
-# Send ciphertext
-s.sendall(b"CT:" + hex_encode(ct).encode() + b"\n")
-
-print("Shared secret:", ss.hex())
-s.close()
-```
-
----
-
-## 🛠 Troubleshooting
-
-### ❌ Stack Canary Triggered
-- Ensure Kyber operations are *not* inside `loop()` or `setup()`
-- Only run in the FreeRTOS crypto task with **≥ 32 KB stack**
-
-### ❌ Client receives no PK
-- Ensure both devices are on the same Wi-Fi network  
-- Check firewall settings  
-- Confirm `SERVER_PORT` is correct  
-
-### ❌ Shared secrets do not match
-- Client must use **same Kyber parameter set**:
-  - `KYBER_K = 2` → Kyber-512
-  - `KYBER_K = 3` → Kyber-768
-  - `KYBER_K = 4` → Kyber-1024
-
----
-
-## 🔐 Security Considerations
-
-This is a **demo**:
-- AES-GCM IV is fixed (do **not** use this in production)
-- Shared secret printed to Serial
-- No authentication or replay protection
-
-For real systems:
-- Use random IVs
-- Never expose keys
-- Add digital signatures (e.g., Dilithium)
-- Use secure key derivation (HKDF)
-
----
-
-## 📜 License
-
-MIT License — free to use, modify, distribute.
-
----
-
-## ✉️ Contact
-
-For an Android client or BLE-secure version, open an issue.
-
-Happy Post-Quantum IoT Hacking! 🧬🔒  
-ESP32 + Kyber = Future-Proof Security 🚀
