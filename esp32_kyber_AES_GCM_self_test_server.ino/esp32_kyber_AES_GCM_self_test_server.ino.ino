@@ -11,8 +11,8 @@ extern "C" {
 }
 
 // ================== USER CONFIG ==================
-const char* WIFI_SSID     = "SAKIB";
-const char* WIFI_PASSWORD = "123456AB";
+const char* WIFI_SSID     = "WIFI_SSID";
+const char* WIFI_PASSWORD = "WIFI_PASSWORD";
 
 const uint16_t SERVER_PORT = 5000;
 // =================================================
